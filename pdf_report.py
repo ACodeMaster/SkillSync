@@ -1,0 +1,146 @@
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from analyzer import build_resume_suggestions
+
+
+def generate_pdf_report(
+    filename,
+    technical_match,
+    technical_matched,
+    technical_missing,
+    output_path,
+    soft_match=None,
+    soft_matched=None,
+    soft_missing=None
+):
+    """Generate a professional-looking PDF resume analysis report with wrapped tables and suggestions."""
+
+    soft_matched = soft_matched or []
+    soft_missing = soft_missing or []
+
+    doc = SimpleDocTemplate(output_path, pagesize=A4, rightMargin=40, leftMargin=40, topMargin=40)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # Custom paragraph style for wrapping inside tables
+    wrap_style = ParagraphStyle(
+        "wrap_style",
+        parent=styles["Normal"],
+        fontSize=10,
+        leading=14,
+    )
+
+    # ----- Logo and Title -----
+    try:
+        logo_path = "static/logo.png"
+        elements.append(Image(logo_path, width=80, height=80))
+    except Exception:
+        pass
+
+    title = f"<b>SkillSync – AI Resume Analyzer</b>"
+    elements.append(Paragraph(title, styles["Title"]))
+    elements.append(Spacer(1, 12))
+
+    subtitle = f"<b>Analysis Report for:</b> {filename}"
+    elements.append(Paragraph(subtitle, styles["Normal"]))
+    elements.append(Spacer(1, 20))
+
+    # ----- Match Summary Table -----
+    summary_data = [
+        ["Category", "Match Percentage"],
+        ["Technical Skills", f"{technical_match}%"],
+        ["Soft Skills", f"{soft_match if soft_match else 0}%"]
+    ]
+    summary_table = Table(summary_data, colWidths=[200, 200])
+    summary_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#5B86E5")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTSIZE", (0, 0), (-1, 0), 12),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 10),
+    ]))
+    elements.append(summary_table)
+    elements.append(Spacer(1, 20))
+
+    # ----- Technical Skills -----
+    elements.append(Paragraph("<b>Technical Skills Analysis</b>", styles["Heading2"]))
+    tech_data = [
+        [
+            Paragraph("Matched Skills", wrap_style),
+            Paragraph(", ".join(technical_matched) if technical_matched else "None", wrap_style)
+        ],
+        [
+            Paragraph("Missing Skills", wrap_style),
+            Paragraph(", ".join(technical_missing) if technical_missing else "None", wrap_style)
+        ]
+    ]
+    tech_table = Table(tech_data, colWidths=[150, 350])
+    tech_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), colors.lightblue),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(tech_table)
+    elements.append(Spacer(1, 20))
+
+    # ----- Soft Skills -----
+    elements.append(Paragraph("<b>Soft Skills Analysis</b>", styles["Heading2"]))
+    soft_data = [
+        [
+            Paragraph("Matched Soft Skills", wrap_style),
+            Paragraph(", ".join(soft_matched) if soft_matched else "None", wrap_style)
+        ],
+        [
+            Paragraph("Missing Soft Skills", wrap_style),
+            Paragraph(", ".join(soft_missing) if soft_missing else "None", wrap_style)
+        ]
+    ]
+    soft_table = Table(soft_data, colWidths=[150, 350])
+    soft_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), colors.lightgreen),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(soft_table)
+    elements.append(Spacer(1, 25))
+
+    # ----- Suggestions -----
+    elements.append(Paragraph("<b>💡 Resume Improvement Suggestions</b>", styles["Heading2"]))
+    all_results = {
+        "technical": {
+            "missing": technical_missing,
+            "matched": technical_matched,
+            "match_percent": technical_match,
+        },
+        "soft": {
+            "missing": soft_missing,
+            "matched": soft_matched,
+            "match_percent": soft_match or 0,
+        }
+    }
+    suggestions = build_resume_suggestions(all_results)
+
+    if suggestions:
+        for i, s in enumerate(suggestions, 1):
+            elements.append(Paragraph(f"{i}. {s}", wrap_style))
+            elements.append(Spacer(1, 6))
+    else:
+        elements.append(Paragraph("✅ Your resume already looks excellent!", wrap_style))
+
+    # ----- Footer -----
+    elements.append(Spacer(1, 25))
+    footer = Paragraph("<b>Generated by SkillSync AI Resume Analyzer © 2025</b>", styles["Italic"])
+    elements.append(footer)
+
+    doc.build(elements)
+    print(f"✅ PDF report generated: {output_path}")

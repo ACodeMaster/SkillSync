@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Simulation Result | SkillSync</title>
+  <style>
+:root {
+  --primary-color: #5B86E5;
+  --secondary-color: #36D1DC;
+  --accent-color: #00C896;
+  --text-light: #e0e6ed;
+  --bg-dark: #0a0f1a;
+  --card-bg: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--bg-dark) url('{{ url_for("static", filename="background.png") }}') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Main Container */
+.container {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  max-width: 550px;
+  width: 90%;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+/* Title */
+h1 {
+  color: var(--primary-color);
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px rgba(91,134,229,0.5);
+}
+
+/* Circle Container */
+.circle {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: conic-gradient(#2b2e3a 0deg, #2b2e3a 360deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.inner-circle {
+  position: absolute;
+  width: 145px;
+  height: 145px;
+  background: rgba(10, 15, 26, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle span {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Rating label */
+.rating-label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.rating-excellent { color: var(--accent-color); }
+.rating-good { color: #fbc02d; }
+.rating-needs { color: #e53935; }
+
+/* Summary box */
+.summary {
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.457);
+  border-radius: 10px;
+  padding: 1.2rem;
+  line-height: 1.6;
+  color: #ffffff;
+  text-align: left;
+  border-left: 4px solid var(--primary-color);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* Back button */
+.btn {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 0.9rem 1.8rem;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 15px rgba(91,134,229,0.4);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(91,134,229,0.7);
+}
+</style>
+
+</head>
+<body>
+  <div class="container">
+    <h1>ATS Simulation Result</h1>
+
+    {% set score_line = ats_result.splitlines()[0] %}
+    {% set score = score_line.split(':')[-1].replace('%', '').strip() %}
+    {% set summary = ats_result.split('Summary:')[-1].strip() %}
+
+    <div class="circle" id="scoreCircle">
+      <div class="inner-circle">
+        <span id="scoreValue">0%</span>
+      </div>
+    </div>
+
+    <div id="ratingLabel" class="rating-label"></div>
+
+    <div class="summary">
+      <strong>Summary:</strong> {{ summary }}
+    </div>
+
+    <a href="{{ url_for('home') }}" class="btn">⬅ Back to Dashboard</a>
+  </div>
+
+  <script>
+    const finalScore = {{ score | safe }};
+    const circle = document.getElementById("scoreCircle");
+    const valueText = document.getElementById("scoreValue");
+    const ratingLabel = document.getElementById("ratingLabel");
+
+    // Color gradient by score
+    function getColor(score) {
+      if (score >= 80) return "#43a047"; // Green
+      if (score >= 50) return "#fbc02d"; // Yellow
+      return "#e53935"; // Red
+    }
+
+    function getRating(score) {
+      if (score >= 80) return { text: "Excellent Match ✅", class: "rating-excellent" };
+      if (score >= 50) return { text: "Good Match 👍", class: "rating-good" };
+      return { text: "Needs Improvement ⚙️", class: "rating-needs" };
+    }
+
+    let currentScore = 0;
+    const step = 10;
+    const duration = 1200;
+    const increment = finalScore / (duration / step);
+
+    const animation = setInterval(() => {
+      currentScore += increment;
+      if (currentScore >= finalScore) {
+        currentScore = finalScore;
+        clearInterval(animation);
+
+        // Show rating label
+        const rating = getRating(finalScore);
+        ratingLabel.textContent = rating.text;
+        ratingLabel.classList.add(rating.class);
+      }
+
+      const deg = (currentScore / 100) * 360;
+      const color = getColor(finalScore);
+      circle.style.background = `conic-gradient(${color} ${deg}deg, #e0e0e0 ${deg}deg)`;
+      valueText.textContent = Math.round(currentScore) + "%";
+    }, step);
+    setupFileLabel("ats-resume", "ats-resume-name");
+setupFileLabel("ats-jd", "ats-jd-name");
+  </script>
+</body>
+</html>

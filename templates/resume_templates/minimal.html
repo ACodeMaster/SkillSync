@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ name }} - Resume</title>
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #222;
+    background-color: #fafafa;
+    margin: 40px;
+  }
+  h1 { font-size: 1.8em; margin: 0; }
+  h2 { color: #666; font-size: 1em; font-weight: 500; }
+  .grid { display: grid; grid-template-columns: 35% 65%; gap: 20px; }
+  .left { background-color: #eef2f5; padding: 20px; border-radius: 6px; }
+  .right { padding: 20px; }
+  h3 { border-bottom: 1px solid #ccc; padding-bottom: 3px; text-transform: uppercase; color: #333; font-size: 0.95em; }
+  ul { margin: 0; padding-left: 18px; }
+  p { margin: 0 0 8px 0; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="left">
+      {% if name %}<h1>{{ name }}</h1>{% endif %}
+      {% if title %}<h2>{{ title }}</h2>{% endif %}
+
+      {% if phone or email or linkedin %}
+      <p>
+        {% if phone %}{{ phone }}<br>{% endif %}
+        {% if email %}{{ email }}<br>{% endif %}
+        {% if linkedin %}{{ linkedin }}{% endif %}
+      </p>
+      {% endif %}
+
+      {% if skills %}
+      <h3>Technical Skills</h3>
+      <ul>
+        {% for skill in skills %}
+        <li>{{ skill }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if languages %}
+      <h3>Languages</h3>
+      <ul>
+        {% for lang in languages %}
+        <li>{% if lang.lang %}{{ lang.lang }}{% if lang.proficiency %} ({{ lang.proficiency }}){% endif %}{% else %}{{ lang }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if certifications %}
+      <h3>Certifications</h3>
+      <ul>
+        {% for cert in certifications %}
+        <li>{% if cert.title %}{{ cert.title }}{% if cert.org %} – {{ cert.org }}{% endif %}{% else %}{{ cert }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    <div class="right">
+      {% if summary %}
+      <h3>Professional Summary</h3>
+      <p>{{ summary }}</p>
+      {% endif %}
+
+      {% if experience %}
+      <h3>Professional Experience</h3>
+      {% for exp in experience %}
+      <p>
+        {% if exp.title %}<strong>{{ exp.title }}</strong>{% if exp.company %} – {{ exp.company }}{% endif %}{% if exp.dates %} ({{ exp.dates }}){% endif %}{% else %}{{ exp }}{% endif %}
+      </p>
+      {% if exp.bullets %}
+      <ul>
+        {% for bullet in exp.bullets %}
+        <li>{{ bullet }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+
+      {% if education %}
+      <h3>Education</h3>
+      {% for edu in education %}
+      <p>{% if edu.degree %}<strong>{{ edu.degree }}</strong>{% if edu.institution %} – {{ edu.institution }}{% endif %}{% if edu.year %} ({{ edu.year }}){% endif %}{% else %}{{ edu }}{% endif %}</p>
+      {% endfor %}
+      {% endif %}
+
+      {% if projects %}
+      <h3>Projects</h3>
+      {% for proj in projects %}
+      <p>{% if proj.title %}<strong>{{ proj.title }}</strong>{% if proj.desc %}: {{ proj.desc }}{% endif %}{% else %}{{ proj }}{% endif %}</p>
+      {% endfor %}
+      {% endif %}
+
+      {% if awards %}
+      <h3>Awards & Achievements</h3>
+      {% for award in awards %}
+      <p>{% if award.title %}{{ award.title }}{% if award.year %} – {{ award.year }}{% endif %}{% else %}{{ award }}{% endif %}</p>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

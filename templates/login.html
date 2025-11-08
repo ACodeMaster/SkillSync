@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSync – Login</title>
+  <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
+  <style>
+    :root {
+      --primary-color: #5B86E5;
+      --secondary-color: #36D1DC;
+      --text-light: #e0e6ed;
+      --bg-dark: #0a0f1a;
+      --card-bg: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark) url('{{ url_for("static", filename="background.png") }}') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .navbar .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      border-radius: 8px;
+    }
+
+    .navbar h1 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .navbar nav a {
+      margin-left: 20px;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .navbar nav a:hover {
+      color: #ffd700;
+    }
+
+    /* ===== Login Card ===== */
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 7rem;
+    }
+
+    .form-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 0 25px rgba(91, 134, 229, 0.3);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .form-card h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .flash-message {
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .flash-message.success {
+      background-color: rgba(0, 255, 128, 0.15);
+      color: #8effc1;
+      border: 1px solid rgba(0, 255, 128, 0.3);
+    }
+
+    .flash-message.danger {
+      background-color: rgba(255, 0, 0, 0.15);
+      color: #ff7b7b;
+      border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+
+    .form-card input[type="text"], 
+    .form-card input[type="password"] {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .form-card input[type="text"]:focus,
+    .form-card input[type="password"]:focus {
+      box-shadow: 0 0 8px rgba(91, 134, 229, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .form-card input[type="submit"] {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(54,209,220,0.3);
+    }
+
+    .form-card input[type="submit"]:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(91,134,229,0.5);
+    }
+
+    .form-card p {
+      margin-top: 1.2rem;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .form-card a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-card a:hover {
+      color: #00C896;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      background: rgba(0,0,0,0.75);
+      color: #cfd8e3;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      padding: 1.2rem 1rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="SkillSync Logo">
+      <h1>SkillSync</h1>
+    </div>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('signup') }}">Sign Up</a>
+      <a href="{{ url_for('contact') }}">Contact</a>
+      <a href="{{ url_for('help_page') }}">Help</a>
+    </nav>
+  </header>
+
+  <!-- Login Form -->
+  <div class="main-content">
+    <div class="form-card">
+      <h2>Login to Your Account</h2>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <form action="{{ url_for('login') }}" method="post">
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <input type="submit" value="Log In">
+      </form>
+      <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 SkillSync. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>

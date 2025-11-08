@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ name }} - Resume</title>
+<style>
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    color: #333;
+    background-color: #fff;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    min-height: 100vh;
+  }
+  .sidebar {
+    background-color: #4cb1af;
+    color: white;
+    padding: 30px;
+  }
+  .sidebar h1 {
+    font-size: 1.8em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .sidebar h2 {
+    font-size: 1em;
+    color: #d9f3f3;
+    font-weight: normal;
+  }
+  .sidebar p, .sidebar a {
+    font-size: 0.9em;
+    color: white;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .sidebar ul li::before {
+    content: "▪ ";
+  }
+  .main {
+    padding: 30px;
+  }
+  .section {
+    margin-bottom: 25px;
+  }
+  .section h3 {
+    border-bottom: 2px solid #4cb1af;
+    color: #4cb1af;
+    text-transform: uppercase;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  .section p, .section li {
+    font-size: 0.95em;
+    line-height: 1.5;
+  }
+  b.placeholder {
+    color: #999;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      {% if name %}<h1>{{ name }}</h1>{% endif %}
+      {% if title %}<h2>{{ title }}</h2>{% endif %}
+
+      {% if phone or email or linkedin %}
+      <p>
+        {% if phone %}{{ phone }}<br>{% endif %}
+        {% if email %}{{ email }}<br>{% endif %}
+        {% if linkedin %}{{ linkedin }}{% endif %}
+      </p>
+      {% endif %}
+
+      {% if skills %}
+      <h3>Skills</h3>
+      <ul>
+        {% for skill in skills %}
+        <li>{{ skill }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if languages %}
+      <h3>Languages</h3>
+      <ul>
+        {% for lang in languages %}
+        <li>{% if lang.lang %}{{ lang.lang }}{% if lang.proficiency %} ({{ lang.proficiency }}){% endif %}{% else %}{{ lang }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if certifications %}
+      <h3>Certifications</h3>
+      <ul>
+        {% for cert in certifications %}
+        <li>{% if cert.title %}{{ cert.title }}{% if cert.org %} – {{ cert.org }}{% endif %}{% else %}{{ cert }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    <div class="main">
+
+      {% if summary %}
+      <div class="section">
+        <h3>Profile</h3>
+        <p>{{ summary }}</p>
+      </div>
+      {% endif %}
+
+      {% if experience %}
+      <div class="section">
+        <h3>Experience</h3>
+        {% for exp in experience %}
+        <p>
+          {% if exp.title %}<strong>{{ exp.title }}</strong>{% if exp.company %} – {{ exp.company }}{% endif %}{% if exp.dates %} ({{ exp.dates }}){% endif %}{% else %}{{ exp }}{% endif %}
+        </p>
+        {% if exp.bullets %}
+        <ul>
+          {% for bullet in exp.bullets %}
+          <li>{{ bullet }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if education %}
+      <div class="section">
+        <h3>Education</h3>
+        {% for edu in education %}
+        <p>{% if edu.degree %}<strong>{{ edu.degree }}</strong>{% if edu.institution %} – {{ edu.institution }}{% endif %}{% if edu.year %} ({{ edu.year }}){% endif %}{% else %}{{ edu }}{% endif %}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if projects %}
+      <div class="section">
+        <h3>Projects</h3>
+        {% for proj in projects %}
+        <p>{% if proj.title %}<strong>{{ proj.title }}</strong>{% if proj.desc %}: {{ proj.desc }}{% endif %}{% else %}{{ proj }}{% endif %}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if awards %}
+      <div class="section">
+        <h3>Awards & Achievements</h3>
+        {% for award in awards %}
+        <p>{% if award.title %}{{ award.title }}{% if award.year %} – {{ award.year }}{% endif %}{% else %}{{ award }}{% endif %}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

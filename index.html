@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSync – AI Resume Analyzer</title>
+  <style>
+    /* ====== Global Styling ====== */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: #1E1E1E;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ====== Navbar ====== */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: #6C63FF;
+      color: white;
+    }
+
+    .navbar h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .navbar nav a {
+      margin-left: 20px;
+      font-weight: 500;
+      transition: opacity 0.3s;
+    }
+
+    .navbar nav a:hover {
+      opacity: 0.8;
+    }
+
+    /* ====== Hero Section ====== */
+    .hero {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, #6C63FF, #00C9A7);
+      color: white;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background: #FFD23F;
+      color: #1E1E1E;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .hero button:hover {
+      transform: translateY(-2px);
+      background: #FFC300;
+    }
+
+    /* ====== Upload Section ====== */
+    .upload-section {
+      max-width: 600px;
+      margin: 3rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .upload-section h3 {
+      margin-bottom: 1rem;
+      color: #6C63FF;
+    }
+
+    .upload-section input[type="file"] {
+      margin: 1rem 0;
+    }
+
+    .upload-section button {
+      padding: 0.7rem 1.2rem;
+      background: #00C9A7;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .upload-section button:hover {
+      background: #00b190;
+    }
+
+    /* ====== Footer ====== */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
+      background: #6C63FF;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <h1>SkillSync</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+  <form action="/analyze" method="POST" enctype="multipart/form-data">
+  <input type="file" name="resume" accept=".pdf,.docx"><br>
+  <button type="submit">Analyze Resume</button>
+</form>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Boost Your Career with SkillSync</h2>
+    <p>Upload your resume and see how well it matches job descriptions in seconds.</p>
+    <button onclick="document.getElementById('upload').scrollIntoView({behavior: 'smooth'});">
+      Try Now
+    </button>
+  </section>
+
+  <!-- Upload Section -->
+  <section class="upload-section" id="upload">
+    <h3>Upload Your Resume</h3>
+    <form>
+      <input type="file" accept=".pdf,.docx"><br>
+      <button type="submit">Analyze Resume</button>
+    </form>
+  </section>
+  <section class="upload-section" id="resume-builder">
+  <h3>Resume Builder</h3>
+  <p>Upload your resume and a job description. We'll suggest improvements to boost your match score.</p>
+  <form action="/resume-builder" method="POST" enctype="multipart/form-data">
+    <input type="file" name="resume" accept=".pdf,.docx"><br>
+    <input type="file" name="jd" accept=".txt"><br>
+    <button type="submit">Generate Suggestions</button>
+  </form>
+</section>
+
+
+
+
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 SkillSync. All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>

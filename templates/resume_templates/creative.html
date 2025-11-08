@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ name }} - Resume</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-blue: #2c3e50;
+        --light-grey: #f5f5f5;
+        --text-dark: #333;
+        --text-light: #fff;
+    }
+
+    body {
+        font-family: 'Open Sans', sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: var(--light-grey);
+        color: var(--text-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .resume-container {
+        width: 100%;
+        max-width: 850px;
+        background-color: #fff;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .header {
+        background-color: var(--primary-blue);
+        color: var(--text-light);
+        padding: 25px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .header h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 2em;
+        margin: 0;
+        flex-grow: 1;
+    }
+
+    .contact-info {
+        text-align: right;
+        font-size: 0.9em;
+    }
+
+    .contact-info div {
+        margin-bottom: 5px;
+    }
+
+    .main-content {
+        display: flex;
+        padding: 30px 40px;
+    }
+
+    .left-column {
+        flex: 1;
+        padding-right: 30px;
+    }
+
+    .right-column {
+        flex: 2;
+        padding-left: 30px;
+        border-left: 1px solid #eee;
+    }
+
+    h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        font-size: 1.3em;
+        color: var(--primary-blue);
+        margin-bottom: 10px;
+        padding-bottom: 4px;
+        border-bottom: 2px solid #eee;
+    }
+
+    h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    ul li {
+        margin-bottom: 5px;
+        padding-left: 15px;
+        position: relative;
+    }
+
+    ul li::before {
+        content: '•';
+        color: var(--primary-blue);
+        position: absolute;
+        left: 0;
+    }
+
+    .section {
+        margin-bottom: 25px;
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            flex-direction: column;
+            padding: 20px;
+        }
+        .right-column {
+            border-left: none;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="resume-container">
+    <div class="header">
+        <div>
+            {% if name %}<h1>{{ name }}</h1>{% endif %}
+            {% if summary %}<p>{{ summary }}</p>{% endif %}
+        </div>
+        <div class="contact-info">
+            {% if email %}<div>{{ email }}</div>{% endif %}
+            {% if phone %}<div>{{ phone }}</div>{% endif %}
+            {% if linkedin %}<div>{{ linkedin }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="left-column">
+            {% if skills %}
+            <div class="section">
+                <h2>Skills</h2>
+                <ul>
+                    {% for skill in skills %}
+                    <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if awards %}
+            <div class="section">
+                <h2>Awards & Achievements</h2>
+                <ul>
+                    {% for award in awards %}
+                    <li>{% if award.title %}{{ award.title }}{% if award.year %} – {{ award.year }}{% endif %}{% else %}{{ award }}{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if languages %}
+            <div class="section">
+                <h2>Languages</h2>
+                <ul>
+                    {% for lang in languages %}
+                    <li>{% if lang.lang %}{{ lang.lang }}{% if lang.proficiency %} ({{ lang.proficiency }}){% endif %}{% else %}{{ lang }}{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if certifications %}
+            <div class="section">
+                <h2>Certifications</h2>
+                <ul>
+                    {% for cert in certifications %}
+                    <li>{% if cert.title %}{{ cert.title }}{% if cert.org %} – {{ cert.org }}{% endif %}{% else %}{{ cert }}{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="right-column">
+            {% if experience %}
+            <div class="section">
+                <h2>Experience</h2>
+                {% for exp in experience %}
+                <div style="margin-bottom: 15px;">
+                    <p style="margin-bottom: 5px;">
+                        {% if exp.title %}<strong>{{ exp.title }}</strong>{% if exp.company %} – {{ exp.company }}{% endif %}{% if exp.dates %} ({{ exp.dates }}){% endif %}{% else %}{{ exp }}{% endif %}
+                    </p>
+                    {% if exp.bullets %}
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        {% for bullet in exp.bullets %}
+                        <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if projects %}
+            <div class="section">
+                <h2>Projects</h2>
+                {% for proj in projects %}
+                <p>{% if proj.title %}<strong>{{ proj.title }}</strong>{% if proj.desc %}: {{ proj.desc }}{% endif %}{% else %}{{ proj }}{% endif %}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if education %}
+            <div class="section">
+                <h2>Education</h2>
+                {% for edu in education %}
+                <p>{% if edu.degree %}<strong>{{ edu.degree }}</strong>{% if edu.institution %} – {{ edu.institution }}{% endif %}{% if edu.year %} ({{ edu.year }}){% endif %}{% else %}{{ edu }}{% endif %}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

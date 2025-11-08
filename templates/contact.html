@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSync – Contact</title>
+  <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
+  <style>
+    :root {
+      --primary-color: #5B86E5;
+      --secondary-color: #36D1DC;
+      --text-light: #e0e6ed;
+      --bg-dark: #0a0f1a;
+      --card-bg: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark) url('{{ url_for("static", filename="background.png") }}') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .navbar .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      border-radius: 8px;
+    }
+
+    .navbar h1 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .navbar nav a {
+      margin-left: 20px;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .navbar nav a:hover {
+      color: #ffd700;
+    }
+
+    /* ===== Contact Section ===== */
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 9rem 2rem 4rem;
+    }
+
+    .content-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 0 25px rgba(91, 134, 229, 0.3);
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .content-card h2 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .content-card p {
+      color: #d1d9e6;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .content-card form {
+      text-align: left;
+    }
+
+    .content-card label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #f0f0f0;
+    }
+
+    .content-card input[type="text"],
+    .content-card input[type="email"],
+    .content-card textarea {
+      width: 100%;
+      padding: 0.9rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+    .content-card input:focus,
+    .content-card textarea:focus {
+      box-shadow: 0 0 10px rgba(91, 134, 229, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .content-card button {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(54,209,220,0.3);
+    }
+
+    .content-card button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(91,134,229,0.5);
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      background: rgba(0,0,0,0.75);
+      color: #cfd8e3;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      padding: 1.2rem 1rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="SkillSync Logo">
+      <h1>SkillSync</h1>
+    </div>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('signup') }}">Sign Up</a>
+      <a href="{{ url_for('contact') }}">Contact</a>
+      <a href="{{ url_for('help_page') }}">Help</a>
+    </nav>
+  </header>
+
+  <!-- Contact Section -->
+  <div class="main-content">
+    <div class="content-card">
+      <h2>Contact Us</h2>
+      <p>Have questions or feedback? We’d love to hear from you. Fill out the form below, and we’ll get back to you soon.</p>
+      
+      <form>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 SkillSync. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>

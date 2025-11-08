@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ name }} - Resume</title>
+<style>
+  body {
+    font-family: 'Georgia', serif;
+    margin: 40px;
+    color: #222;
+    background-color: #fff;
+  }
+  h1 {
+    text-transform: uppercase;
+    font-size: 1.8em;
+    margin-bottom: 0;
+  }
+  .contact {
+    font-size: 0.9em;
+    margin-bottom: 25px;
+  }
+  hr {
+    border: none;
+    border-top: 2px solid #0066cc;
+    margin-bottom: 20px;
+  }
+  .section {
+    margin-top: 25px;
+  }
+  .section h2 {
+    color: #0066cc;
+    text-transform: uppercase;
+    font-size: 1em;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding-bottom: 3px;
+  }
+  ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  ul li {
+    margin-bottom: 4px;
+  }
+  p {
+    margin: 5px 0;
+  }
+</style>
+</head>
+<body>
+
+  {% if name %}
+  <h1>{{ name }}</h1>
+  {% endif %}
+
+  {% if phone or email or linkedin %}
+  <div class="contact">
+    {% if phone %}{{ phone }}{% endif %}
+    {% if email %} | {{ email }}{% endif %}
+    {% if linkedin %} | {{ linkedin }}{% endif %}
+  </div>
+  {% endif %}
+
+  <hr>
+
+  {% if summary %}
+  <div class="section">
+    <h2>Summary / Objective</h2>
+    <p>{{ summary }}</p>
+  </div>
+  {% endif %}
+
+  {% if skills %}
+  <div class="section">
+    <h2>Skills</h2>
+    <ul>
+      {% for skill in skills %}
+      <li>{{ skill }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if experience %}
+  <div class="section">
+    <h2>Experience</h2>
+    {% for exp in experience %}
+    <p><strong>{{ exp.title }}</strong> – {{ exp.company }} ({{ exp.dates }})</p>
+    <ul>
+      {% for b in exp.bullets %}
+      <li>{{ b }}</li>
+      {% endfor %}
+    </ul>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if education %}
+  <div class="section">
+    <h2>Education</h2>
+    <ul>
+      {% for edu in education %}
+      <li><strong>{{ edu.degree }}</strong> – {{ edu.institution }} ({{ edu.year }})</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if projects %}
+  <div class="section">
+    <h2>Projects</h2>
+    <ul>
+      {% for proj in projects %}
+      <li><strong>{{ proj.title }}</strong>: {{ proj.desc }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if awards %}
+  <div class="section">
+    <h2>Awards & Achievements</h2>
+    <ul>
+      {% for award in awards %}
+      <li>{{ award.title }} – {{ award.year }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if languages %}
+  <div class="section">
+    <h2>Languages</h2>
+    <ul>
+      {% for lang in languages %}
+      <li>{{ lang.lang }} ({{ lang.proficiency }})</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if certifications %}
+  <div class="section">
+    <h2>Certifications</h2>
+    <ul>
+      {% for cert in certifications %}
+      <li>{{ cert.title }} – {{ cert.org }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+</body>
+</html>

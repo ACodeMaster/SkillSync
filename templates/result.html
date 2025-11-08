@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analysis Result – SkillSync</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #FAFAFA;
+      color: #1E1E1E;
+      text-align: center;
+      padding: 2rem;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #6C63FF;
+      margin-bottom: 1rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 0.4rem 0;
+      text-align: left;
+      padding-left: 1.2rem;
+    }
+    .matched { color: #2ECC71; }
+    .missing { color: #E74C3C; }
+    .btn {
+      margin-top: 1.5rem;
+      display: inline-block;
+      padding: 0.8rem 1.3rem;
+      background: #6C63FF;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover { background: #574bff; }
+    .divider {
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Resume Analysis for {{ filename }}</h2>
+
+    <p><strong>Technical Match:</strong> {{ result['technical_match'] }}%</p>
+    <p><strong>Soft Skill Match:</strong> {{ result['soft_match'] }}%</p>
+
+    <div class="divider"></div>
+
+    <h3>Technical Skills</h3>
+    <p><strong>Matched:</strong></p>
+    <ul>
+      {% for skill in result['technical_matched'] %}
+      <li class="matched">✅ {{ skill }}</li>
+      {% else %}
+      <li>No matched skills found.</li>
+      {% endfor %}
+    </ul>
+
+    <p><strong>Missing:</strong></p>
+    <ul>
+      {% for skill in result['technical_missing'] %}
+      <li class="missing">❌ {{ skill }}</li>
+      {% else %}
+      <li>All skills matched — great job!</li>
+      {% endfor %}
+    </ul>
+
+    <div class="divider"></div>
+
+    <h3>Soft Skills</h3>
+    <p><strong>Matched:</strong></p>
+    <ul>
+      {% for skill in result['soft_matched'] %}
+      <li class="matched">✅ {{ skill }}</li>
+      {% else %}
+      <li>No matched soft skills found.</li>
+      {% endfor %}
+    </ul>
+
+    <p><strong>Missing:</strong></p>
+    <ul>
+      {% for skill in result['soft_missing'] %}
+      <li class="missing">❌ {{ skill }}</li>
+      {% else %}
+      <li>All soft skills matched — excellent!</li>
+      {% endfor %}
+    </ul>
+
+    <div class="divider"></div>
+
+    <!-- ✅ Download PDF Button -->
+    <!-- <form action="/download-report" method="POST">
+      <input type="hidden" name="filename" value="{{ filename }}">
+      <input type="hidden" name="technical_match" value="{{ result['technical_match'] }}">
+      <input type="hidden" name="soft_match" value="{{ result['soft_match'] }}">
+      {% for skill in result['technical_matched'] %}
+      <input type="hidden" name="technical_matched" value="{{ skill }}">
+      {% endfor %}
+      {% for skill in result['technical_missing'] %}
+      <input type="hidden" name="technical_missing" value="{{ skill }}">
+      {% endfor %}
+      {% for skill in result['soft_matched'] %}
+      <input type="hidden" name="soft_matched" value="{{ skill }}">
+      {% endfor %}
+      {% for skill in result['soft_missing'] %}
+      <input type="hidden" name="soft_missing" value="{{ skill }}">
+      {% endfor %}
+      <button type="submit" class="btn">📄 Download PDF Report</button>
+    </form> -->
+
+    <a href="{{ url_for('home') }}" class="btn" style="background:#00C9A7;">⬅ Back to Home</a>
+  </div>
+</body>
+</html>

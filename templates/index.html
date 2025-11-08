@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSync – AI Resume Analyzer</title>
+  <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
+  <style>
+    :root {
+      --primary-color: #5B86E5;
+      --secondary-color: #36D1DC;
+      --accent-color: #00C896;
+      --text-light: #e0e6ed;
+      --bg-dark: #0a0f1a;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --blur: 12px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark) url('{{ url_for("static", filename="background.png") }}') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-light);
+      scroll-behavior: smooth;
+    }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .navbar .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      border-radius: 8px;
+    }
+
+    .navbar h1 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .navbar nav a {
+      margin-left: 17px;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3rem;
+  flex-wrap: wrap; /* ensures elements wrap properly on smaller screens */
+}
+
+.navbar nav a {
+  display: inline-block;
+  margin: 10px 15px;
+  white-space: nowrap;
+}
+
+
+    .navbar nav a:hover {
+      color: #ffd700;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 6rem;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(8px);
+      border-radius: 15px;
+      margin: 8rem auto 4rem;
+      max-width: 900px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(91, 134, 229, 0.8);
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #cfd8e3;
+      margin-bottom: 2rem;
+    }
+
+    /* ===== Main Feature Cards ===== */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: 2rem auto 0;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(91,134,229,0.5);
+      background: linear-gradient(90deg, #5B86E5, #36D1DC);
+    }
+
+    /* ===== Section Styling ===== */
+    .section {
+      background: var(--card-bg);
+      backdrop-filter: blur(var(--blur));
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      padding: 3rem 2rem;
+      margin: 4rem auto;
+      max-width: 900px;
+    }
+
+    .section h3 {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="file"], textarea, select {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary, .btn-download {
+      display: block;
+      width: 100%;
+      background: linear-gradient(90deg, #5B86E5, #36D1DC);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 0 15px rgba(54,209,220,0.3);
+    }
+
+    .btn-primary:hover, .btn-download:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(91,134,229,0.5);
+    }
+
+    .btn-download {
+      background: linear-gradient(90deg, #00C896, #00B385);
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      background: rgba(0,0,0,0.75);
+      color: #cfd8e3;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    footer a {
+      color: #5B86E5;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    footer a:hover {
+      color: #36D1DC;
+    }
+
+    /* ===== Chatbot ===== */
+    #chat-toggle {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #6C63FF;
+      color: white;
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 1.8rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    #chatbot {
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      width: 340px;
+      height: 420px;
+      background: rgba(0, 0, 0, 0.781);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    #chat-header {
+      background: #6C63FF;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+    }
+
+    #chat-input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    #chat-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 10px;
+    }
+
+    #send-btn {
+      background: #6C63FF;
+      color: white;
+      border: none;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    /* ===== AI Add-ons Grid Layout ===== */
+.addons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.addon-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.addon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(91, 134, 229, 0.4);
+}
+#ai-addons h3 {
+  text-align: center;
+}
+
+.addon-card h4 {
+  color: #ffffff;
+  margin-bottom: 0.8rem;
+}
+
+.addon-card p {
+  color: #cfd8e3;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.addon-card textarea,
+.addon-card select {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-family: inherit;
+}
+
+.addon-card textarea::placeholder {
+  color: #bfc8d8;
+}
+body {
+  overflow-x: hidden; /* removes horizontal scroll */
+  margin-right: 0; /* avoids unnecessary right gap */
+}
+
+.upload-section, .hero, .addons-grid {
+  max-width: 85%; /* slightly reduce width */
+  margin-left: auto;
+  margin-right: auto;
+}
+/* ===== AI Add-ons Grid Layout ===== */
+.addons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.addon-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.addon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(91, 134, 229, 0.4);
+}
+
+.addon-card h4 {
+  color: #ffffff;
+  margin-bottom: 0.8rem;
+}
+
+.addon-card p {
+  color: #cfd8e3;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.addon-card textarea,
+.addon-card select {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 0.8rem;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-family: inherit;
+}
+
+.addon-card textarea::placeholder {
+  color: #bfc8d8;
+}
+/* ===== AI Tools Section Layout ===== */
+.addons-container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.addon-card {
+  flex: 1 1 300px;
+  max-width: 350px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.center-card {
+  order: 2; /* Forces it to appear in the middle */
+}
+
+#ai-addons h3 {
+  text-align: center;
+  font-size: 2rem;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(91, 134, 229, 0.7);
+  margin-bottom: 1.5rem;
+}
+/* ===== Consistent Input & Button Styles ===== */
+#ai-addons textarea,
+#ai-addons select,
+#ai-addons input[type="text"],
+#ai-addons input[type="file"] {
+  width: 100%;
+  padding: 0.3rem 0.5rem; /* 🔹 reduced padding */
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  background: rgba(83, 82, 82, 0.1);
+  color: #2e2e2e;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 0 6px rgba(255,255,255,0.1);
+  outline: none;
+  transition: all 0.3s ease;
+}
+/* 🔹 Style the Resume Template Dropdown */
+#ai-addons select {
+  background-color: rgba(100, 100, 100, 0.8); /* grey dropdown background */
+  color: #fff;
+}
+
+#ai-addons select option {
+  background-color: #444; /* darker grey for dropdown items */
+  color: #fff; /* white text inside dropdown */
+}
+
+
+#ai-addons textarea::placeholder,
+#ai-addons input::placeholder {
+  color: #ccc;
+}
+
+#ai-addons textarea:focus,
+#ai-addons select:focus,
+#ai-addons input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 8px rgba(91, 134, 229, 0.5);
+}
+
+/* Make buttons and inputs same height */
+#ai-addons button {
+  
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+/* Optional: Keep all buttons same style consistency */
+.btn-primary, .btn-download {
+  width: 100%;
+  font-weight: 600;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+}
+/* ===== Custom File Upload Styling ===== */
+.file-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.file-input {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+.file-btn {
+  background: linear-gradient(90deg, #5B86E5, #36D1DC);
+  color: #fff;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(91,134,229,0.3);
+}
+
+.file-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(91,134,229,0.5);
+}
+
+.file-name {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  color: #cfd8e3;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-name.empty {
+  color: #9aa6bf;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .file-field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .file-btn, .file-name {
+    width: 100%;
+  }
+}
+/* 2 cards on top, 1 centered below *//* ===== AI Tools Section Layout - Neat and Aligned ===== */
+.custom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 850px; /* aligns section width with others */
+  margin: 1rem auto 0; /* less space above, center aligned */
+  gap: 3.5rem; /* smaller space between the two top cards */
+  justify-content: center;
+  align-items: start;
+}
+
+/* Centered lower card (same width and height as top ones) */
+.custom-grid .center-card {
+  grid-column: 1 / 3;
+  justify-self: center;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Equal width and height for all AI Tools cards */
+#ai-addons .addon-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  min-height: 300px;   /* slightly shorter cards */
+  max-height: 300px;
+  width: 100%;
+  max-width: 420px;    /* same width for all */
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+/* Reduce top margin of the section for tighter layout */
+#ai-addons {
+  margin-top: 2rem;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .custom-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .custom-grid .center-card {
+    grid-column: auto;
+    max-width: 100%;
+  }
+  #ai-addons .addon-card {
+    max-width: 100%;
+    min-height: auto;
+  }
+}
+
+/* Chat toggle button (new UI) */
+.chat-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(90deg,#6C63FF,#5B86E5);
+  color: #fff;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  transition: all 220ms ease;
+  z-index: 1100;
+}
+
+/* compact when closed: circle only */
+.chat-toggle .chat-text { 
+  display: none;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+/* when expanded (data attribute toggled by JS) */
+.chat-toggle[data-open="true"] {
+  width: 120px;
+  height: 44px;
+  border-radius: 28px;
+  padding: 0 14px;
+}
+
+.chat-toggle[data-open="true"] .chat-text {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+/* small icon styling */
+.chat-toggle .chat-icon {
+  display: inline-block;
+  font-size: 1.2rem;
+  transform-origin: center;
+  transition: transform 220ms ease;
+}
+
+/* rotate icon when open */
+.chat-toggle[data-open="true"] .chat-icon {
+  transform: rotate(15deg) scale(1.05);
+}
+
+/* hover */
+.chat-toggle:hover { transform: translateY(-3px); }
+
+/* responsive safe: keep away from right edge on very small screens */
+@media (max-width: 420px) {
+  .chat-toggle { right: 16px; bottom: 18px; }
+}
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="SkillSync Logo">
+      <h1>SkillSync</h1>
+    </div>
+    <nav>
+      {% if logged_in %}
+      <a href="{{ url_for('logout') }}">Logout ({{ username }})</a>
+      {% else %}
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('signup') }}">Sign Up</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+     <h1 style="font-size: 2.3rem; color: #5B86E5; margin-bottom: 1rem;">
+    SkillSync AI: Smart Resume Optimizer
+  </h1>
+
+  <p style="max-width: 750px; margin: 1rem auto; line-height: 1.6; color: #d1d9e6;">
+    Transform your resume into an interview-winning profile. 
+    SkillSync’s AI analyzes your resume, identifies key strengths, 
+    and gives tailored suggestions to improve your chances of passing 
+    Applicant Tracking Systems (ATS) and impressing recruiters.
+  </p>
+    <h2>Boost Your Career with AI</h2>
+    <p>Analyze, optimize, and enhance your resume for the future job market.</p>
+
+    <div class="features">
+      <div class="feature-card" onclick="document.getElementById('upload').scrollIntoView({behavior:'smooth'})">📊 Resume Analyzer</div>
+      <div class="feature-card" onclick="document.getElementById('resume-suggestion').scrollIntoView({behavior:'smooth'})">💡 Resume Suggestions</div>
+      <div class="feature-card" onclick="document.getElementById('ai-addons').scrollIntoView({behavior:'smooth'})">🧠 AI Tools</div>
+      <div class="feature-card" onclick="document.getElementById('ats-simulation').scrollIntoView({behavior:'smooth'})">📋 ATS Test</div>
+    </div>
+  </section>
+
+<!-- Resume Analyzer Section -->
+<section class="section" id="upload">
+  <h3>📊 Resume Analyzer</h3>
+  <form action="/analyze" method="POST" enctype="multipart/form-data">
+    <div class="file-field">
+      <input id="analyze-resume" name="resume" type="file" accept=".pdf,.docx" class="file-input" required>
+      <label for="analyze-resume" class="file-btn">📄 Choose Resume</label>
+      <span class="file-name" id="analyze-resume-name">No file chosen</span>
+    </div>
+
+    <div class="file-field">
+      <input id="analyze-jd" name="jd" type="file" accept=".txt" class="file-input" required>
+      <label for="analyze-jd" class="file-btn">📑 Choose Job Description</label>
+      <span class="file-name" id="analyze-jd-name">No file chosen</span>
+    </div>
+
+    <button class="btn-primary">Analyze Resume</button>
+  </form>
+</section>
+
+<!-- Resume Suggestions Section -->
+<section class="section" id="resume-suggestion">
+  <h3>💡 Resume Suggestion Report</h3>
+  <form action="/resume-builder" method="POST" enctype="multipart/form-data">
+    <div class="file-field">
+      <input id="suggest-resume" name="resume" type="file" accept=".pdf,.docx" class="file-input" required>
+      <label for="suggest-resume" class="file-btn">📄 Choose Resume</label>
+      <span class="file-name" id="suggest-resume-name">No file chosen</span>
+    </div>
+
+    <div class="file-field">
+      <input id="suggest-jd" name="jd" type="file" accept=".txt" class="file-input" required>
+      <label for="suggest-jd" class="file-btn">📑 Choose Job Description</label>
+      <span class="file-name" id="suggest-jd-name">No file chosen</span>
+    </div>
+
+    <button class="btn-download">⬇️ Download Suggestions PDF</button>
+  </form>
+</section>
+
+<!-- ============================= -->
+<!-- 🧠 AI Resume Tools Section -->
+<!-- ============================= -->
+<section class="upload-section" id="ai-addons">
+  <h3>🧠 AI Resume Tools</h3>
+  <p style="text-align:center; color:#f0f0f0;">
+    Enhance your resume using AI-powered tools for smarter, faster career growth.
+  </p>
+
+  <div class="custom-grid">
+  <!-- Auto Resume Generator -->
+  <div class="addon-card">
+    <h4>📄 Auto Resume Generator</h4>
+    <p>Quickly design your resume using prebuilt templates and preview before downloading.</p>
+    <button class="btn-primary" onclick="window.location.href='/resume-editor'">
+      Generate Resume PDF
+    </button>
+  </div>
+
+  <!-- AI Summary Writer -->
+  <div class="addon-card">
+    <h4>✍️ AI Summary Writer</h4>
+    <p>Craft a compelling 'About Me' summary for your resume using AI. Just provide key points about your background and skills.</p>
+    <form action="/generate-summary" method="POST">
+      <textarea name="summary_input" rows="5" placeholder="Enter key points about yourself..."></textarea><br>
+      <button type="submit" class="btn-download">Generate 'About Me' Summary</button>
+    </form>
+  </div>
+
+  <!-- Bullet Point Enhancer -->
+  <div class="addon-card center-card">
+    <h4>⚡ Bullet Point Enhancer</h4>
+    <p>Enhance your experience bullets to make them more impactful and results-oriented using AI.</p>
+    <form action="/enhance-bullets" method="POST">
+      <textarea name="bullets" rows="5" placeholder="Paste your experience bullets..."></textarea><br>
+      <button type="submit" class="btn-primary">Enhance Bullets</button>
+    </form>
+  </div>
+</div>
+
+<!-- ATS Simulation Section -->
+<section class="section" id="ats-simulation">
+  <h3>📋 ATS Simulation</h3>
+  <p>Upload your resume and job description to test if your resume passes ATS filters.</p>
+
+  {% if logged_in %}
+  <form action="/ats-simulation" method="POST" enctype="multipart/form-data">
+    <div class="file-field">
+      <input id="ats-resume" name="resume" type="file" accept=".pdf,.docx" class="file-input" required>
+      <label for="ats-resume" class="file-btn">📄 Choose Resume</label>
+      <span class="file-name" id="ats-resume-name">No file chosen</span>
+    </div>
+
+    <div class="file-field">
+      <input id="ats-jd" name="jd" type="file" accept=".txt" class="file-input" required>
+      <label for="ats-jd" class="file-btn">📑 Choose Job Description</label>
+      <span class="file-name" id="ats-jd-name">No file chosen</span>
+    </div>
+
+    <button type="submit" class="btn-primary">Run ATS Simulation</button>
+  </form>
+  {% else %}
+  <p>Please <a href="{{ url_for('login') }}">log in</a> to use ATS Simulation.</p>
+  {% endif %}
+</section>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      <a href="{{ url_for('contact') }}">Contact</a> |
+      <a href="{{ url_for('help_page') }}">Help</a>
+    </p>
+    <p>© 2025 SkillSync. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Chatbot -->
+  <!-- Chatbot -->
+<!-- Chatbot toggle -->
+<button id="chat-toggle" aria-pressed="false" aria-label="Open chat" class="chat-toggle">
+  <span class="chat-icon">💬</span>
+  <span class="chat-text">Chat</span>
+</button>
+
+
+  <div id="chatbot">
+    <div id="chat-header">
+      <span>SkillSync Assistant</span>
+      <button id="close-chat">✖</button>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-area">
+      <input id="chat-input" type="text" placeholder="Ask something...">
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  function setupFileLabel(inputId, nameId) {
+    const input = document.getElementById(inputId);
+    const nameSpan = document.getElementById(nameId);
+
+    input.addEventListener("change", () => {
+      if (input.files && input.files.length > 0) {
+        nameSpan.textContent = input.files[0].name;
+        nameSpan.classList.remove("empty");
+      } else {
+        nameSpan.textContent = "No file chosen";
+        nameSpan.classList.add("empty");
+      }
+    });
+  }
+
+  setupFileLabel("analyze-resume", "analyze-resume-name");
+  setupFileLabel("analyze-jd", "analyze-jd-name");
+  setupFileLabel("suggest-resume", "suggest-resume-name");
+  setupFileLabel("suggest-jd", "suggest-jd-name");
+  setupFileLabel("ats-resume", "ats-resume-name");
+  setupFileLabel("ats-jd", "ats-jd-name");
+
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('chat-toggle');
+  const bot = document.getElementById('chatbot');
+  const closeBtn = document.getElementById('close-chat');
+
+  if (!toggle || !bot) return;
+
+  function setOpen(open) {
+    if (open) {
+      bot.style.display = 'flex';
+      toggle.setAttribute('aria-pressed', 'true');
+      toggle.setAttribute('aria-label', 'Close chat');
+      toggle.dataset.open = 'true';
+    } else {
+      bot.style.display = 'none';
+      toggle.setAttribute('aria-pressed', 'false');
+      toggle.setAttribute('aria-label', 'Open chat');
+      toggle.dataset.open = 'false';
+    }
+  }
+
+  // initialize (preserve default hidden state)
+  setOpen(false);
+
+  // main toggle click
+  toggle.addEventListener('click', (e) => {
+    const isOpen = toggle.dataset.open === 'true';
+    setOpen(!isOpen);
+
+    // if you have existing handlers that listen for #chat-toggle clicks, they still run
+  });
+
+  // close button inside chat box (if present)
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => setOpen(false));
+  }
+
+  // optional: close chat when clicking outside the panel
+  document.addEventListener('click', (event) => {
+    const isClickInside = bot.contains(event.target) || toggle.contains(event.target);
+    if (!isClickInside && toggle.dataset.open === 'true') {
+      setOpen(false);
+    }
+  });
+
+  // optional: open with Escape key to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle.dataset.open === 'true') {
+      setOpen(false);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
